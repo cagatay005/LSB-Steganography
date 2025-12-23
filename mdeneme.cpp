@@ -36,7 +36,7 @@ public:
         width = w;
         height = h;
         matrix = new Color*[height];
-        for (int i = 0; i < height; i++)
+        for (int i = height - 1; i >= 0; i--)
             matrix[i] = new Color[width];
     }
 
@@ -70,7 +70,7 @@ public:
     void TumResmiAnalizEt() {
         cout << "Analiz basliyor..." << endl;
         
-        for (int i = 0; i < height; i++) {
+        for (int i = height-1; i>=0; i--) {
             for (int j = 0; j < width; j++) {
             
             // 1. Mevcut pikseli al
@@ -91,8 +91,8 @@ public:
 
             
 
-            // Örnek olarak sadece ilk pikselin değerlerini yazdıralım Denemek için burayı yorum satırından çıkarabilirsin.
-            /*if (i == 0 && j == 0) {
+            // Örnek olarak sadece ilk kelimenin değerlerini yazdıralım Denemek için burayı yorum satırından çıkarabilirsin.
+            /*if (i == 0 && j < 3) {
                 cout << "Piksel (0,0) Degerleri:" << endl;
                 
                 cout << "R (Kirmizi - Binary): " << binR << endl; 
@@ -129,24 +129,26 @@ public:
         int Indeks = 0;
         unsigned char mesajBitleri = 0;
         int bitSayaci = 0;
+        int nullSayaci = 0;
 
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
+            for (int i = height-1; i>=0; i--) {
+              for (int j = 0; j < width; j++) {
+
                 
                 unsigned int A = Birlestir(matrix[i][j].r, matrix[i][j].g, matrix[i][j].b);
                 unsigned char R, G, B;
                 ParcalariAyir(A, R, G, B);
 
-                unsigned char Renkler[3] = {R, G, B};
+                unsigned char Renkler[3] = {matrix[i][j].b, matrix[i][j].g, matrix[i][j].r};
                 
                 for (int k = 0; k < 3; k++) {
                     unsigned char sonBitler = Renkler[k] & 1;
-                    mesajBitleri = (mesajBitleri << 1) | sonBitler;
+                    mesajBitleri |= (sonBitler << bitSayaci);
                     bitSayaci++;
-
                     // 8 bit (1 Harf) oluştuğunda:
                     if (bitSayaci == 8) {
                         char bulunanKarakter = (char)mesajBitleri;
+
                         Mesaj[Indeks] = bulunanKarakter;
                         Indeks++;
                         
@@ -154,10 +156,10 @@ public:
                         // Böylece karakter görünmez olsa bile (boşluk, null vs.) sayıyı görürsün.
                         if (bulunanKarakter >= 32 && bulunanKarakter < 127) {
                             // Okunabilir harf ise harfi göster
-                            cout << "[" << bulunanKarakter << "] "; 
+                            cout << "" << bulunanKarakter << ""; 
                         } else {
                             // Okunamaz ise sayısal değerini göster (Örn: [0], [13] vb.)
-                            cout << "[" << (int)(unsigned char)bulunanKarakter << "] ";
+                            cout << "" << (int)(unsigned char)bulunanKarakter << "";
                         }
 
                         // Çıkış Koşulu: Null karakter
@@ -167,8 +169,8 @@ public:
                         }
 
                         // Çıkış Koşulu: Dizi taşması
-                        if (Indeks >= 1000) {
-                            cout << "\n\n[SINIR] 1000 karakter okundu." << endl;
+                        if (Indeks >= 1023) {
+                            cout << "\n\n[SINIR] 1024 karakter okundu." << endl;
                             return;
                         }
 
@@ -191,9 +193,9 @@ public:
 
 int main() {
     // (Gerçek bir BMP yükleyeceksen boyutları o resme göre ayarlamayı veya constructor'ı değiştirmeyi unutma) Benim yüklediğim output.bmp 300x300 boyutunda.
-    Image resim(300, 300); 
+    Image resim(400, 300); 
 
-    resim.yukleBMP("output1.bmp");
+    resim.yukleBMP("sifreli.bmp");
     
     // 3. Yüklenen resmin her pikselini binary mantığıyla ayırıp analiz et
     resim.TumResmiAnalizEt();
