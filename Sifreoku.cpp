@@ -157,6 +157,8 @@ public:
                         if (bulunanKarakter >= 32 && bulunanKarakter < 127) {
                             // Okunabilir harf ise harfi göster
                             cout << "" << bulunanKarakter << ""; 
+                        } else if (bulunanKarakter == '\0') {
+                            cout << "";
                         } else {
                             // Okunamaz ise sayısal değerini göster (Örn: [0], [13] vb.)
                             cout << "" << (int)(unsigned char)bulunanKarakter << "";
@@ -195,7 +197,7 @@ int main() {
     // (Gerçek bir BMP yükleyeceksen boyutları o resme göre ayarlamayı veya constructor'ı değiştirmeyi unutma) Benim yüklediğim output.bmp 300x300 boyutunda.
     Image resim(400, 300); 
 
-    resim.yukleBMP("sifreli.bmp");
+    resim.yukleBMP("sifreli_yeni.bmp");
     
     // 3. Yüklenen resmin her pikselini binary mantığıyla ayırıp analiz et
     resim.TumResmiAnalizEt();
